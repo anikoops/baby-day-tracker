@@ -13,6 +13,7 @@ import {
 import { activityConfig } from "@/lib/activity-config";
 import { Moon, Milk, Baby, Square, Sparkles, Trash2 } from "lucide-react";
 import babyMoon from "@/assets/baby-moon.png";
+import { SleepStatsSheet } from "@/components/SleepStatsSheet";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -31,6 +32,7 @@ function HomePage() {
   } = useTracker();
 
   const [, setTick] = useState(0);
+  const [sleepOpen, setSleepOpen] = useState(false);
   useEffect(() => {
     const i = setInterval(() => setTick((n) => n + 1), 30000);
     return () => clearInterval(i);
@@ -99,7 +101,7 @@ function HomePage() {
       )}
 
       <div className="grid grid-cols-2 gap-3">
-        <StatCard label="Сон" value={formatDuration(sleepMs)} icon={Moon} tint="sleep" />
+        <StatCard label="Сон" value={formatDuration(sleepMs)} icon={Moon} tint="sleep" onClick={() => setSleepOpen(true)} />
         <StatCard
           label="Бодрствование"
           value={formatDuration(wakeMs)}
@@ -189,6 +191,7 @@ function HomePage() {
           </div>
         )}
       </div>
+      <SleepStatsSheet open={sleepOpen} onOpenChange={setSleepOpen} />
     </div>
   );
 }
@@ -208,12 +211,14 @@ function StatCard({
   sub,
   icon: Icon,
   tint,
+  onClick,
 }: {
   label: string;
   value: string;
   sub?: string;
   icon: React.ComponentType<{ className?: string }>;
   tint: "sleep" | "feed" | "diaper" | "walk";
+  onClick?: () => void;
 }) {
   const tintMap = {
     sleep: "text-[oklch(0.78_0.13_300)]",
@@ -221,8 +226,12 @@ function StatCard({
     diaper: "text-[oklch(0.85_0.14_80)]",
     walk: "text-[oklch(0.80_0.13_150)]",
   };
+  const Tag = onClick ? "button" : "div";
   return (
-    <div className="glass-card rounded-3xl p-4">
+    <Tag
+      onClick={onClick}
+      className={`glass-card rounded-3xl p-4 text-left ${onClick ? "transition-transform active:scale-[0.98]" : ""}`}
+    >
       <div className="flex items-center justify-between">
         <span className="text-[11px] uppercase tracking-wider text-muted-foreground">
           {label}
@@ -233,7 +242,7 @@ function StatCard({
         <span className="text-2xl font-bold tabular-nums">{value}</span>
         {sub && <span className="text-xs text-muted-foreground">{sub}</span>}
       </div>
-    </div>
+    </Tag>
   );
 }
 
