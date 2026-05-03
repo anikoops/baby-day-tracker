@@ -16,11 +16,12 @@ export interface Activity {
 interface State {
   babyName: string;
   babyAgeMonths: number;
+  babyBirthDate?: string; // ISO yyyy-mm-dd
   currentParent: string;
   partners: string[];
   activities: Activity[];
   activeId?: string;
-  setBaby: (name: string, age: number) => void;
+  setBaby: (name: string, birthDate: string) => void;
   setParent: (name: string) => void;
   addPartner: (name: string) => void;
   startActivity: (type: ActivityType, meta?: Record<string, string | number>) => void;
