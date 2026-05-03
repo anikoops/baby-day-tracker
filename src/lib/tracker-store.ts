@@ -35,10 +35,22 @@ export const useTracker = create<State>()(
     (set, get) => ({
       babyName: "Малыш",
       babyAgeMonths: 4,
+      babyBirthDate: undefined,
       currentParent: "Мама",
       partners: ["Мама", "Папа"],
       activities: [],
-      setBaby: (babyName, babyAgeMonths) => set({ babyName, babyAgeMonths }),
+      setBaby: (babyName, babyBirthDate) => {
+        const months = babyBirthDate
+          ? Math.max(
+              0,
+              Math.floor(
+                (Date.now() - new Date(babyBirthDate).getTime()) /
+                  (1000 * 60 * 60 * 24 * 30.4375),
+              ),
+            )
+          : 0;
+        set({ babyName, babyBirthDate, babyAgeMonths: months });
+      },
       setParent: (currentParent) => set({ currentParent }),
       addPartner: (name) =>
         set((s) => ({ partners: Array.from(new Set([...s.partners, name])) })),
