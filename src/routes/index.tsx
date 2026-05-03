@@ -191,6 +191,7 @@ function HomePage() {
           </div>
         )}
       </div>
+      <SleepStatsSheet open={sleepOpen} onOpenChange={setSleepOpen} />
     </div>
   );
 }
