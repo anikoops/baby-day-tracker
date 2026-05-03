@@ -7,6 +7,7 @@ import {
   formatDuration,
   formatTime,
   timeAgo,
+  formatBabyAge,
   type ActivityType,
 } from "@/lib/tracker-store";
 import { activityConfig } from "@/lib/activity-config";
