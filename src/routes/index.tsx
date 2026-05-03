@@ -32,6 +32,7 @@ function HomePage() {
   } = useTracker();
 
   const [, setTick] = useState(0);
+  const [sleepOpen, setSleepOpen] = useState(false);
   useEffect(() => {
     const i = setInterval(() => setTick((n) => n + 1), 30000);
     return () => clearInterval(i);
