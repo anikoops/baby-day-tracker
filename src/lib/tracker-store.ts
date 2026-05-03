@@ -16,11 +16,12 @@ export interface Activity {
 interface State {
   babyName: string;
   babyAgeMonths: number;
+  babyBirthDate?: string; // ISO yyyy-mm-dd
   currentParent: string;
   partners: string[];
   activities: Activity[];
   activeId?: string;
-  setBaby: (name: string, age: number) => void;
+  setBaby: (name: string, birthDate: string) => void;
   setParent: (name: string) => void;
   addPartner: (name: string) => void;
   startActivity: (type: ActivityType, meta?: Record<string, string | number>) => void;
@@ -34,10 +35,22 @@ export const useTracker = create<State>()(
     (set, get) => ({
       babyName: "Малыш",
       babyAgeMonths: 4,
+      babyBirthDate: undefined,
       currentParent: "Мама",
       partners: ["Мама", "Папа"],
       activities: [],
-      setBaby: (babyName, babyAgeMonths) => set({ babyName, babyAgeMonths }),
+      setBaby: (babyName, babyBirthDate) => {
+        const months = babyBirthDate
+          ? Math.max(
+              0,
+              Math.floor(
+                (Date.now() - new Date(babyBirthDate).getTime()) /
+                  (1000 * 60 * 60 * 24 * 30.4375),
+              ),
+            )
+          : 0;
+        set({ babyName, babyBirthDate, babyAgeMonths: months });
+      },
       setParent: (currentParent) => set({ currentParent }),
       addPartner: (name) =>
         set((s) => ({ partners: Array.from(new Set([...s.partners, name])) })),
@@ -117,4 +130,33 @@ export function timeAgo(ts: number) {
   if (h < 24) return `${h} ч назад`;
   const d = Math.floor(h / 24);
   return `${d} д назад`;
+}
+
+export function formatBabyAge(birthDate?: string) {
+  if (!birthDate) return "—";
+  const birth = new Date(birthDate);
+  const now = new Date();
+  let months =
+    (now.getFullYear() - birth.getFullYear()) * 12 +
+    (now.getMonth() - birth.getMonth());
+  let days = now.getDate() - birth.getDate();
+  if (days < 0) {
+    months -= 1;
+    const prev = new Date(now.getFullYear(), now.getMonth(), 0);
+    days += prev.getDate();
+  }
+  if (months <= 0) return `${Math.max(0, Math.floor((now.getTime() - birth.getTime()) / 86400000))} дн.`;
+  const monthWord =
+    months % 10 === 1 && months % 100 !== 11
+      ? "месяц"
+      : [2, 3, 4].includes(months % 10) && ![12, 13, 14].includes(months % 100)
+        ? "месяца"
+        : "месяцев";
+  const dayWord =
+    days % 10 === 1 && days % 100 !== 11
+      ? "день"
+      : [2, 3, 4].includes(days % 10) && ![12, 13, 14].includes(days % 100)
+        ? "дня"
+        : "дней";
+  return `${months} ${monthWord} ${days} ${dayWord}`;
 }

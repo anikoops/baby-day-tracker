@@ -10,7 +10,7 @@ export const Route = createFileRoute("/settings")({
 function SettingsPage() {
   const {
     babyName,
-    babyAgeMonths,
+    babyBirthDate,
     setBaby,
     currentParent,
     setParent,
@@ -18,7 +18,7 @@ function SettingsPage() {
     addPartner,
   } = useTracker();
   const [name, setName] = useState(babyName);
-  const [age, setAge] = useState(babyAgeMonths);
+  const [birth, setBirth] = useState(babyBirthDate ?? "");
   const [newPartner, setNewPartner] = useState("");
 
   return (
@@ -39,16 +39,16 @@ function SettingsPage() {
             className="w-full bg-transparent text-base font-medium outline-none"
           />
         </Field>
-        <Field label="Возраст (мес)">
+        <Field label="Дата рождения">
           <input
-            type="number"
-            value={age}
-            onChange={(e) => setAge(Number(e.target.value))}
+            type="date"
+            value={birth}
+            onChange={(e) => setBirth(e.target.value)}
             className="w-full bg-transparent text-base font-medium outline-none"
           />
         </Field>
         <button
-          onClick={() => setBaby(name, age)}
+          onClick={() => setBaby(name, birth)}
           className="flex items-center justify-center gap-2 rounded-2xl bg-primary py-3 font-semibold text-primary-foreground active:scale-[0.98]"
         >
           <Check className="size-4" /> Сохранить

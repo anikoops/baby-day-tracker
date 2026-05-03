@@ -7,6 +7,7 @@ import {
   formatDuration,
   formatTime,
   timeAgo,
+  formatBabyAge,
   type ActivityType,
 } from "@/lib/tracker-store";
 import { activityConfig } from "@/lib/activity-config";
@@ -20,13 +21,12 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   const {
     babyName,
-    babyAgeMonths,
+    babyBirthDate,
     activities,
     activeId,
     startActivity,
     stopActivity,
     logInstant,
-    currentParent,
     removeActivity,
   } = useTracker();
 
@@ -57,11 +57,8 @@ function HomePage() {
     <div className="flex flex-col gap-5 px-5 pt-8">
       <header className="flex items-center justify-between">
         <div>
-          <p className="text-xs uppercase tracking-widest text-muted-foreground">
-            {currentParent} · сегодня
-          </p>
-          <h1 className="mt-1 text-2xl font-bold">{babyName}</h1>
-          <p className="text-sm text-muted-foreground">{babyAgeMonths} месяца</p>
+          <h1 className="text-2xl font-bold">{babyName}</h1>
+          <p className="mt-1 text-sm text-muted-foreground">{formatBabyAge(babyBirthDate)}</p>
         </div>
         <div className="relative">
           <div className="absolute inset-0 rounded-full bg-primary/30 blur-2xl" />
