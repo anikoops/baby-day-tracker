@@ -13,6 +13,7 @@ import {
 import { activityConfig } from "@/lib/activity-config";
 import { Moon, Milk, Baby, Square, Sparkles, Trash2 } from "lucide-react";
 import babyMoon from "@/assets/baby-moon.png";
+import { SleepStatsSheet } from "@/components/SleepStatsSheet";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
