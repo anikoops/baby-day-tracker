@@ -21,13 +21,12 @@ export const Route = createFileRoute("/")({
 function HomePage() {
   const {
     babyName,
-    babyAgeMonths,
+    babyBirthDate,
     activities,
     activeId,
     startActivity,
     stopActivity,
     logInstant,
-    currentParent,
     removeActivity,
   } = useTracker();
 
