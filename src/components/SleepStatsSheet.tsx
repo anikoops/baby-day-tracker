@@ -242,7 +242,6 @@ export function SleepStatsSheet({ open, onOpenChange }: Props) {
                       <p className="text-sm font-semibold">
                         {fmt(s.startedAt)} – {s.endedAt ? fmt(s.endedAt) : "сейчас"}
                       </p>
-                      <p className="text-xs text-muted-foreground">{s.parent}</p>
                     </div>
                     <p className="font-mono text-sm tabular-nums">{formatDuration(dur)}</p>
                   </div>
