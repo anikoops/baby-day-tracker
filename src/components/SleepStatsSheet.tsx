@@ -248,7 +248,7 @@ export function SleepStatsSheet({ open, onOpenChange }: Props) {
             />
             <Tile
               icon={<Sun className="size-5 text-[oklch(0.85_0.14_80)]" />}
-              label="Бодрствование"
+              label="В активе"
               value={formatDuration(Math.max(0, now - dayStartMs - sleepMs))}
             />
             <Tile label="Засыпаний" value={`${sleepSessions.length}`} />
