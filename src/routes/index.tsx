@@ -103,7 +103,7 @@ function HomePage() {
       <div className="grid grid-cols-2 gap-3">
         <StatCard label="Сон" value={formatDuration(sleepMs)} icon={Moon} tint="sleep" onClick={() => setSleepOpen(true)} />
         <StatCard
-          label="Бодрствование"
+          label="В активе"
           value={formatDuration(wakeMs)}
           icon={Sparkles}
           tint="diaper"
