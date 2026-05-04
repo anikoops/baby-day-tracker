@@ -8,18 +8,9 @@ export const Route = createFileRoute("/settings")({
 });
 
 function SettingsPage() {
-  const {
-    babyName,
-    babyBirthDate,
-    setBaby,
-    currentParent,
-    setParent,
-    partners,
-    addPartner,
-  } = useTracker();
+  const { babyName, babyBirthDate, setBaby } = useTracker();
   const [name, setName] = useState(babyName);
   const [birth, setBirth] = useState(babyBirthDate ?? "");
-  const [newPartner, setNewPartner] = useState("");
 
   return (
     <div className="flex flex-col gap-5 px-5 pt-8">
