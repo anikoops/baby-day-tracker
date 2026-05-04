@@ -74,23 +74,62 @@ export function SleepStatsSheet({ open, onOpenChange }: Props) {
             </SheetTitle>
           </SheetHeader>
 
-          <div className="relative mt-4">
-            <svg viewBox={`0 0 ${W} ${H + 30}`} className="w-full">
+          <div className="relative mt-4 overflow-hidden rounded-3xl">
+            {/* starfield + nebula background */}
+            <div className="pointer-events-none absolute inset-0">
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_30%,oklch(0.32_0.10_290/0.55),transparent_65%)]" />
+              <div
+                className="absolute inset-0 opacity-70"
+                style={{
+                  backgroundImage:
+                    "radial-gradient(1px 1px at 12% 28%, white, transparent), radial-gradient(1px 1px at 72% 18%, white, transparent), radial-gradient(1px 1px at 38% 62%, white, transparent), radial-gradient(1px 1px at 88% 70%, white, transparent), radial-gradient(1px 1px at 8% 78%, white, transparent), radial-gradient(1px 1px at 56% 38%, white, transparent), radial-gradient(1.4px 1.4px at 28% 14%, white, transparent), radial-gradient(1px 1px at 92% 44%, white, transparent), radial-gradient(1px 1px at 48% 82%, white, transparent)",
+                }}
+              />
+            </div>
+            <svg viewBox={`0 0 ${W} ${H + 30}`} className="relative w-full">
               <defs>
-                <linearGradient id="arcGrad" x1="0" x2="1">
-                  <stop offset="0" stopColor="oklch(0.78 0.13 300)" stopOpacity="0.7" />
-                  <stop offset="1" stopColor="oklch(0.78 0.13 300)" stopOpacity="0.2" />
+                <linearGradient id="arcGrad" x1="0" x2="1" y1="0" y2="0">
+                  <stop offset="0" stopColor="oklch(0.78 0.18 300)" />
+                  <stop offset="0.5" stopColor="oklch(0.72 0.20 320)" />
+                  <stop offset="1" stopColor="oklch(0.65 0.18 260)" />
                 </linearGradient>
+                <radialGradient id="sunGlow" cx="0.5" cy="0.5" r="0.5">
+                  <stop offset="0" stopColor="oklch(0.95 0.18 80)" stopOpacity="0.95" />
+                  <stop offset="0.4" stopColor="oklch(0.85 0.18 80)" stopOpacity="0.4" />
+                  <stop offset="1" stopColor="oklch(0.85 0.18 80)" stopOpacity="0" />
+                </radialGradient>
+                <filter id="arcGlow" x="-30%" y="-30%" width="160%" height="160%">
+                  <feGaussianBlur stdDeviation="3" result="blur" />
+                  <feMerge>
+                    <feMergeNode in="blur" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+                <filter id="softGlow" x="-50%" y="-50%" width="200%" height="200%">
+                  <feGaussianBlur stdDeviation="8" />
+                </filter>
               </defs>
 
-              {/* base arc */}
+              {/* outer halo */}
               <path
                 d={`M ${polar(Math.PI).x} ${polar(Math.PI).y} A ${r} ${r} 0 0 1 ${polar(0).x} ${polar(0).y}`}
                 fill="none"
                 stroke="url(#arcGrad)"
-                strokeWidth="10"
+                strokeWidth="26"
                 strokeLinecap="round"
-                opacity="0.35"
+                opacity="0.22"
+                filter="url(#softGlow)"
+              />
+
+              {/* base arc — orbit */}
+              <path
+                d={`M ${polar(Math.PI).x} ${polar(Math.PI).y} A ${r} ${r} 0 0 1 ${polar(0).x} ${polar(0).y}`}
+                fill="none"
+                stroke="url(#arcGrad)"
+                strokeWidth="9"
+                strokeLinecap="round"
+                opacity="0.9"
+                filter="url(#arcGlow)"
               />
 
               {/* sleep segments */}
@@ -106,9 +145,10 @@ export function SleepStatsSheet({ open, onOpenChange }: Props) {
                     key={s.id}
                     d={`M ${p1.x} ${p1.y} A ${r} ${r} 0 ${large} 1 ${p2.x} ${p2.y}`}
                     fill="none"
-                    stroke="oklch(0.78 0.13 300)"
-                    strokeWidth="10"
+                    stroke="oklch(0.88 0.16 300)"
+                    strokeWidth="9"
                     strokeLinecap="round"
+                    filter="url(#arcGlow)"
                   />
                 );
               })}
@@ -117,27 +157,30 @@ export function SleepStatsSheet({ open, onOpenChange }: Props) {
               {today.map((a) => {
                 const pos = polar(tToAngle(a.startedAt));
                 const colorMap: Record<string, string> = {
-                  sleep: "oklch(0.78 0.13 300)",
+                  sleep: "oklch(0.85 0.16 300)",
                   feed: "oklch(0.82 0.13 200)",
                   diaper: "oklch(0.85 0.14 80)",
-                  walk: "oklch(0.80 0.13 150)",
+                  walk: "oklch(0.80 0.15 150)",
                 };
                 return (
-                  <circle
-                    key={a.id}
-                    cx={pos.x}
-                    cy={pos.y}
-                    r="5"
-                    fill={colorMap[a.type]}
-                    stroke="oklch(0.15 0.04 300)"
-                    strokeWidth="2"
-                  />
+                  <g key={a.id}>
+                    <circle cx={pos.x} cy={pos.y} r="9" fill={colorMap[a.type]} opacity="0.25" />
+                    <circle
+                      cx={pos.x}
+                      cy={pos.y}
+                      r="4"
+                      fill={colorMap[a.type]}
+                      stroke="oklch(0.18 0.05 290)"
+                      strokeWidth="1.5"
+                    />
+                  </g>
                 );
               })}
 
-              {/* sun (now) */}
-              <circle cx={sunPos.x} cy={sunPos.y} r="14" fill="oklch(0.85 0.18 80)" opacity="0.25" />
-              <circle cx={sunPos.x} cy={sunPos.y} r="8" fill="oklch(0.88 0.17 80)" />
+              {/* sun (now) — glowing */}
+              <circle cx={sunPos.x} cy={sunPos.y} r="32" fill="url(#sunGlow)" />
+              <circle cx={sunPos.x} cy={sunPos.y} r="11" fill="oklch(0.92 0.18 80)" filter="url(#arcGlow)" />
+              <circle cx={sunPos.x} cy={sunPos.y} r="6" fill="oklch(0.97 0.15 90)" />
 
               {/* now indicator on arc */}
               <line
