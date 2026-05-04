@@ -7,6 +7,7 @@ import {
   type Activity,
 } from "@/lib/tracker-store";
 import { activityConfig } from "@/lib/activity-config";
+import { DayArc } from "@/components/DayArc";
 
 export const Route = createFileRoute("/history")({
   component: HistoryPage,
@@ -67,6 +68,12 @@ function HistoryPage() {
                 🌙 {formatDuration(sleep)} · 🍼 {feeds} · 👶 {diapers}
               </p>
             </div>
+            <DayArc
+              activities={day.list}
+              date={day.date}
+              now={Date.now()}
+              showSun={dayLabel(day.date) === "Сегодня"}
+            />
             <div className="glass-card overflow-hidden rounded-3xl">
               {day.list.map((a, i) => {
                 const cfg = activityConfig[a.type];
