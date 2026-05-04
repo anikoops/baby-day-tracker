@@ -174,8 +174,8 @@ function HomePage() {
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {a.endedAt && a.endedAt - a.startedAt > 60000
-                        ? `${formatDuration(a.endedAt - a.startedAt)} · ${a.parent}`
-                        : `${a.parent} · ${timeAgo(a.startedAt)}`}
+                        ? formatDuration(a.endedAt - a.startedAt)
+                        : timeAgo(a.startedAt)}
                     </p>
                   </div>
                   <button
