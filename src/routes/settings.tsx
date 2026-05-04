@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { useTracker } from "@/lib/tracker-store";
-import { Check, UserPlus } from "lucide-react";
+import { Check } from "lucide-react";
 
 export const Route = createFileRoute("/settings")({
   component: SettingsPage,
