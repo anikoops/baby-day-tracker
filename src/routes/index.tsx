@@ -17,6 +17,13 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
+const shortLabel: Record<ActivityType, string> = {
+  sleep: "Сон",
+  feed: "Еда",
+  diaper: "Подгуз.",
+  walk: "Прогул.",
+};
+
 function HomePage() {
   const {
     babyName,
@@ -29,8 +36,11 @@ function HomePage() {
     logInstant,
   } = useTracker();
 
-  const [now, setNow] = useState(Date.now());
+  const [mounted, setMounted] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
+    setMounted(true);
+    setNow(Date.now());
     const i = setInterval(() => setNow(Date.now()), 30000);
     return () => clearInterval(i);
   }, []);
@@ -54,58 +64,59 @@ function HomePage() {
   };
 
   return (
-    <div className="flex flex-col gap-6 px-5 pb-6 pt-7">
-      <header className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1">
-          <h1 className="truncate text-3xl font-bold">{babyName}</h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            {formatBabyAge(babyBirthDate)}
-            {currentParent ? ` · ${currentParent}` : ""}
-          </p>
+    <div className="flex flex-col gap-5 px-6 pb-6 pt-5">
+      {/* Header */}
+      <header className="relative min-h-[156px]">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1 pt-1">
+            <h1 className="truncate text-[34px] font-bold leading-[38px] tracking-tight text-foreground">
+              {babyName}
+            </h1>
+            <p className="mt-2 text-base text-foreground/65">
+              {formatBabyAge(babyBirthDate)}
+              {currentParent ? ` · ${currentParent}` : ""}
+            </p>
+            <p className="mt-3 text-sm text-foreground/55">Локальный режим</p>
+          </div>
+          <Link
+            to="/settings"
+            aria-label="Настройки"
+            className="liquid-control flex size-12 shrink-0 items-center justify-center rounded-full"
+          >
+            <SettingsIcon className="size-5 text-foreground/80" />
+          </Link>
         </div>
-        <div className="relative shrink-0">
-          <div className="absolute inset-0 rounded-full bg-primary/30 blur-2xl" />
-          <img
-            src={babyMoon}
-            alt="малыш"
-            width={88}
-            height={88}
-            className="relative size-22 object-contain"
-            style={{ width: 88, height: 88 }}
-          />
-        </div>
-        <Link
-          to="/settings"
-          aria-label="Настройки"
-          className="glass-card flex size-10 shrink-0 items-center justify-center rounded-2xl"
-        >
-          <SettingsIcon className="size-4 text-muted-foreground" />
-        </Link>
+        <img
+          src={babyMoon}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute right-0 top-14 h-28 w-40 object-contain opacity-95"
+        />
       </header>
 
-      {/* Quick add */}
+      {/* Quick Add */}
       <section>
-        <p className="mb-3 px-1 text-sm text-muted-foreground">Быстро добавить</p>
-        <div className="flex items-end justify-between gap-2">
+        <h2 className="mb-3 text-xl font-bold text-foreground/75">Быстро добавить</h2>
+        <div className="flex items-center justify-between gap-2">
           <QuickTile type="sleep" active={active?.type === "sleep"} onClick={() => handleQuick("sleep")} />
           <QuickTile type="feed" onClick={() => handleQuick("feed")} />
           <PlusButton onClick={handlePlus} stopping={!!active} />
           <QuickTile type="diaper" onClick={() => handleQuick("diaper")} />
           <QuickTile type="walk" onClick={() => handleQuick("walk")} />
         </div>
-        <p className="mt-3 text-center text-xs text-muted-foreground">
-          ↑ {active ? "Нажмите ещё раз, чтобы остановить" : "Нажмите, чтобы добавить событие"}
+        <p className="mt-2 text-center text-[13px] text-foreground/40">
+          {active ? "Нажмите ещё раз, чтобы остановить" : "Добавить другое событие"}
         </p>
       </section>
 
-      {/* Today timeline card */}
-      <section className="glass-card rounded-3xl p-4">
-        <div className="mb-2 flex items-center justify-between px-1">
-          <h2 className="text-base font-semibold">Сегодня</h2>
-          <p className="text-xs text-muted-foreground">
+      {/* Timeline */}
+      <section className="soft-card rounded-[28px] px-5 pb-4 pt-5">
+        <div className="mb-2 flex items-baseline justify-between">
+          <h2 className="text-[22px] font-bold leading-7">Сегодня</h2>
+          <p className="text-[15px] text-foreground/60" suppressHydrationWarning>
             Сейчас{" "}
-            <span className="font-mono text-sm font-semibold text-primary">
-              {formatTime(now)}
+            <span className="font-mono text-base font-semibold text-primary">
+              {mounted ? formatTime(now) : "--:--"}
             </span>
           </p>
         </div>
@@ -113,22 +124,17 @@ function HomePage() {
       </section>
 
       {/* Recent events */}
-      <section className="glass-card overflow-hidden rounded-3xl">
-        <div className="flex items-center justify-between px-4 pb-2 pt-4">
-          <h2 className="text-base font-semibold">События дня</h2>
-          <Link
-            to="/history"
-            className="inline-flex items-center gap-1 text-sm text-primary"
-          >
-            Смотреть все <ChevronRight className="size-4" />
+      <section className="soft-card rounded-[28px] px-1 pb-2 pt-4">
+        <div className="flex items-center justify-between px-4 pb-2">
+          <h2 className="text-[22px] font-bold leading-7">События дня</h2>
+          <Link to="/history" className="text-[15px] font-semibold text-primary">
+            Смотреть все
           </Link>
         </div>
         {recent.length === 0 ? (
-          <p className="px-4 pb-5 text-sm text-muted-foreground">
-            Сегодня пока нет записей.
-          </p>
+          <p className="px-4 pb-4 text-sm text-foreground/55">Сегодня пока нет записей.</p>
         ) : (
-          <div className="pb-2">
+          <div>
             {recent.map((a, i) => {
               const cfg = activityConfig[a.type];
               const Icon = cfg.icon;
@@ -136,23 +142,23 @@ function HomePage() {
                 <Link
                   to="/history"
                   key={a.id}
-                  className={`flex items-center gap-3 px-4 py-3 ${
+                  className={`flex h-[68px] items-center gap-3 px-4 ${
                     i !== recent.length - 1 ? "border-b border-white/5" : ""
                   }`}
                 >
                   <div
-                    className={`flex size-11 items-center justify-center rounded-2xl ring-1 ${cfg.bg} ${cfg.ring}`}
+                    className={`flex size-[46px] items-center justify-center rounded-[23px] ring-1 ${cfg.bg} ${cfg.ring}`}
                   >
-                    <Icon className={`size-5 ${cfg.color}`} />
+                    <Icon className={`size-[22px] ${cfg.color}`} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-sm font-semibold">{cfg.label}</p>
-                    <p className="text-xs text-muted-foreground">{timeAgo(a.startedAt)}</p>
+                    <p className="text-[17px] font-semibold leading-6">{cfg.label}</p>
+                    <p className="text-[13px] text-foreground/55">{timeAgo(a.startedAt)}</p>
                   </div>
-                  <span className="font-mono text-sm text-muted-foreground">
-                    {formatTime(a.startedAt)}
+                  <span className="font-mono text-[15px] text-foreground/60" suppressHydrationWarning>
+                    {mounted ? formatTime(a.startedAt) : ""}
                   </span>
-                  <ChevronRight className="size-4 text-muted-foreground" />
+                  <ChevronRight className="size-4 text-foreground/40" />
                 </Link>
               );
             })}
@@ -177,16 +183,12 @@ function QuickTile({
   return (
     <button
       onClick={onClick}
-      className={`glass-card flex h-24 w-16 flex-col items-center justify-center gap-1.5 rounded-3xl transition-all active:scale-95 ${
+      className={`liquid-control flex h-[102px] w-[60px] flex-col items-center justify-center gap-2.5 rounded-[22px] transition-transform active:scale-[0.96] ${
         active ? "ring-2 ring-primary" : ""
       }`}
     >
-      <div
-        className={`flex size-9 items-center justify-center rounded-2xl ${cfg.bg} ring-1 ${cfg.ring}`}
-      >
-        <Icon className={`size-4 ${cfg.color}`} />
-      </div>
-      <span className="text-[11px] font-medium">{cfg.label}</span>
+      <Icon className={`size-[26px] ${cfg.color}`} strokeWidth={1.8} />
+      <span className="text-[13px] font-semibold leading-4">{shortLabel[type]}</span>
     </button>
   );
 }
@@ -196,16 +198,18 @@ function PlusButton({ onClick, stopping }: { onClick: () => void; stopping: bool
     <button
       onClick={onClick}
       aria-label={stopping ? "Остановить" : "Добавить событие"}
-      className="relative flex size-20 shrink-0 items-center justify-center rounded-full text-primary-foreground transition-transform active:scale-95"
+      className="plus-pulse relative flex size-24 shrink-0 items-center justify-center rounded-full text-white transition-transform active:scale-[0.96]"
       style={{
         background:
-          "radial-gradient(circle at 30% 30%, oklch(0.85 0.14 310), oklch(0.62 0.20 300))",
-        boxShadow:
-          "0 0 40px oklch(0.78 0.18 300 / 0.6), 0 0 80px oklch(0.78 0.18 300 / 0.35)",
+          "radial-gradient(circle at 35% 25%, rgba(255,255,255,0.38), transparent 28%), linear-gradient(180deg, #B58AFF 0%, #7D4DFF 100%)",
       }}
     >
-      <span className="absolute inset-0 rounded-full ring-2 ring-white/20" />
-      {stopping ? <Square className="size-6 fill-current" /> : <Plus className="size-9" strokeWidth={2.5} />}
+      <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-white/30" />
+      {stopping ? (
+        <Square className="size-6 fill-current" />
+      ) : (
+        <Plus className="size-12" strokeWidth={2} />
+      )}
     </button>
   );
 }

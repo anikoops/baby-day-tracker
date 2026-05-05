@@ -65,7 +65,7 @@ export function TodayTimeline({ activities, now }: Props) {
             <stop offset="1" stopColor="oklch(0.70 0.16 280)" stopOpacity="0.9" />
           </linearGradient>
           <filter id="todayGlow" x="-30%" y="-30%" width="160%" height="160%">
-            <feGaussianBlur stdDeviation="2" result="b" />
+            <feGaussianBlur stdDeviation="1.2" result="b" />
             <feMerge>
               <feMergeNode in="b" />
               <feMergeNode in="SourceGraphic" />
