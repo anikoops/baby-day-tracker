@@ -106,6 +106,28 @@
   box-shadow: var(--shadow-card);
 }
 
+/* Strong liquid glass for floating controls (nav, plus, quick actions) */
+@utility liquid-control {
+  background: rgba(255, 255, 255, 0.075);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 12px 28px rgba(0, 0, 0, 0.22);
+}
+
+/* Soft glass for content cards (timeline, events) */
+@utility soft-card {
+  background: rgba(255, 255, 255, 0.055);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 14px 36px rgba(0, 0, 0, 0.26);
+}
+
 @utility starry {
   background-image:
     radial-gradient(1px 1px at 20% 30%, white, transparent),
@@ -115,4 +137,13 @@
     radial-gradient(1px 1px at 90% 50%, white, transparent);
   background-size: 200px 200px;
   opacity: 0.4;
+}
+
+.plus-pulse {
+  box-shadow: 0 0 24px rgba(155, 99, 255, 0.28);
+  animation: plusPulse 2400ms ease-in-out infinite;
+}
+@keyframes plusPulse {
+  0%, 100% { box-shadow: 0 0 24px rgba(155, 99, 255, 0.28); }
+  50% { box-shadow: 0 0 34px rgba(155, 99, 255, 0.38); }
 }
