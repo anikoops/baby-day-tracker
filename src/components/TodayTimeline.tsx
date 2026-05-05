@@ -1,4 +1,4 @@
-import { Moon, Milk, Baby, Footprints, Sun, type LucideIcon } from "lucide-react";
+import { Moon, Milk, Baby, Footprints, type LucideIcon } from "lucide-react";
 import type { Activity, ActivityType } from "@/lib/tracker-store";
 import { formatTime } from "@/lib/tracker-store";
 
@@ -74,9 +74,24 @@ export function TodayTimeline({ activities, now }: Props) {
         </defs>
 
         {/* sun on left */}
-        <g transform={`translate(${padX - 14}, ${wave(padX) - 6})`}>
-          <circle r="9" fill="oklch(0.85 0.14 80 / 0.18)" />
-          <Sun x={-6} y={-6} width={12} height={12} stroke="oklch(0.88 0.14 80)" strokeWidth={1.5} fill="none" />
+        <g transform={`translate(${padX - 10}, ${wave(padX)})`}>
+          <circle r="10" fill="oklch(0.85 0.14 80 / 0.18)" />
+          <circle r="4" fill="oklch(0.92 0.14 80)" />
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((deg) => {
+            const rad = (deg * Math.PI) / 180;
+            return (
+              <line
+                key={deg}
+                x1={Math.cos(rad) * 6}
+                y1={Math.sin(rad) * 6}
+                x2={Math.cos(rad) * 9}
+                y2={Math.sin(rad) * 9}
+                stroke="oklch(0.88 0.14 80)"
+                strokeWidth="1"
+                strokeLinecap="round"
+              />
+            );
+          })}
         </g>
 
         {/* curve */}
