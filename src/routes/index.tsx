@@ -183,10 +183,21 @@ function QuickTile({
     <button
       onClick={onClick}
       className={`liquid-control flex h-[102px] w-[60px] flex-col items-center justify-center gap-2.5 rounded-[22px] transition-transform active:scale-[0.96] ${
-        active ? "ring-2 ring-primary" : ""
+        active ? "ring-2 ring-primary glow-strong" : "glow-soft"
       }`}
+      style={{
+        boxShadow: active
+          ? undefined
+          : `inset 0 1px 0 rgba(255,255,255,0.08), 0 0 12px color-mix(in oklab, var(--${type}) 22%, transparent), 0 8px 22px rgba(0,0,0,0.24)`,
+      }}
     >
-      <Icon className={`size-[26px] ${cfg.color}`} strokeWidth={1.8} />
+      <Icon
+        className={`size-[26px] ${cfg.color}`}
+        strokeWidth={1.8}
+        style={{
+          filter: `drop-shadow(0 0 6px color-mix(in oklab, var(--${type}) 70%, transparent))`,
+        }}
+      />
       <span className="text-[13px] font-semibold leading-4">{shortLabel[type]}</span>
     </button>
   );
