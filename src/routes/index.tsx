@@ -110,15 +110,11 @@ function HomePage() {
       </section>
 
       {/* Timeline */}
-      <section className="soft-card rounded-[28px] px-5 pb-4 pt-5">
-        <div className="mb-2 flex items-baseline justify-between">
-          <h2 className="text-[22px] font-bold leading-7">Сегодня</h2>
-          <p className="text-[15px] text-foreground/60" suppressHydrationWarning>
-            Сейчас{" "}
-            <span className="font-mono text-base font-semibold text-primary">
-              {mounted ? formatTime(now) : "--:--"}
-            </span>
-          </p>
+      <section className="soft-card rounded-[22px] px-4 pb-3 pt-3">
+        <div className="mb-1 flex items-center justify-between">
+          <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+            Сегодня
+          </h2>
         </div>
         <TodayTimeline activities={today} now={now} />
       </section>
