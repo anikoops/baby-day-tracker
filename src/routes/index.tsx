@@ -110,9 +110,9 @@ function HomePage() {
       </section>
 
       {/* Timeline */}
-      <section className="soft-card rounded-[22px] px-4 pb-3 pt-3">
+      <section className="soft-card glow-medium rounded-[22px] px-4 pb-3 pt-3">
         <div className="mb-1 flex items-center justify-between">
-          <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+          <h2 className="text-glow-soft text-[13px] font-semibold uppercase tracking-[0.18em] text-foreground/70">
             Сегодня
           </h2>
         </div>
