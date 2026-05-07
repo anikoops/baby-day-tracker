@@ -140,10 +140,51 @@
 }
 
 .plus-pulse {
-  box-shadow: 0 0 24px rgba(155, 99, 255, 0.28);
+  box-shadow:
+    0 0 28px rgba(155, 99, 255, 0.45),
+    0 0 60px rgba(155, 99, 255, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
   animation: plusPulse 2400ms ease-in-out infinite;
 }
 @keyframes plusPulse {
-  0%, 100% { box-shadow: 0 0 24px rgba(155, 99, 255, 0.28); }
-  50% { box-shadow: 0 0 34px rgba(155, 99, 255, 0.38); }
+  0%, 100% {
+    box-shadow:
+      0 0 28px rgba(155, 99, 255, 0.45),
+      0 0 60px rgba(155, 99, 255, 0.25),
+      inset 0 1px 0 rgba(255, 255, 255, 0.35);
+  }
+  50% {
+    box-shadow:
+      0 0 38px rgba(155, 99, 255, 0.6),
+      0 0 90px rgba(155, 99, 255, 0.4),
+      inset 0 1px 0 rgba(255, 255, 255, 0.45);
+  }
+}
+
+/* Glow accents: hierarchy of importance */
+@utility glow-strong {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 0 24px color-mix(in oklab, var(--primary) 40%, transparent),
+    0 14px 40px rgba(0, 0, 0, 0.32);
+}
+@utility glow-medium {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 0 14px color-mix(in oklab, var(--primary) 18%, transparent),
+    0 10px 28px rgba(0, 0, 0, 0.26);
+}
+@utility glow-soft {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 8px color-mix(in oklab, var(--primary) 10%, transparent),
+    0 6px 18px rgba(0, 0, 0, 0.22);
+}
+@utility text-glow {
+  text-shadow:
+    0 0 12px color-mix(in oklab, var(--primary) 45%, transparent),
+    0 0 28px color-mix(in oklab, var(--primary) 25%, transparent);
+}
+@utility text-glow-soft {
+  text-shadow: 0 0 10px color-mix(in oklab, var(--primary) 18%, transparent);
 }

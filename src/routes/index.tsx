@@ -69,7 +69,7 @@ function HomePage() {
       <header className="relative min-h-[156px]">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1 pt-1">
-            <h1 className="truncate text-[34px] font-bold leading-[38px] tracking-tight text-foreground">
+            <h1 className="text-glow truncate text-[34px] font-bold leading-[38px] tracking-tight text-foreground">
               {babyName}
             </h1>
             <p className="mt-2 text-base text-foreground/65">
@@ -81,7 +81,7 @@ function HomePage() {
           <Link
             to="/settings"
             aria-label="Настройки"
-            className="liquid-control flex size-12 shrink-0 items-center justify-center rounded-full"
+            className="liquid-control glow-soft flex size-12 shrink-0 items-center justify-center rounded-full"
           >
             <SettingsIcon className="size-5 text-foreground/80" />
           </Link>
@@ -110,9 +110,9 @@ function HomePage() {
       </section>
 
       {/* Timeline */}
-      <section className="soft-card rounded-[22px] px-4 pb-3 pt-3">
+      <section className="soft-card glow-medium rounded-[22px] px-4 pb-3 pt-3">
         <div className="mb-1 flex items-center justify-between">
-          <h2 className="text-[13px] font-semibold uppercase tracking-[0.18em] text-foreground/55">
+          <h2 className="text-glow-soft text-[13px] font-semibold uppercase tracking-[0.18em] text-foreground/70">
             Сегодня
           </h2>
         </div>
@@ -120,10 +120,10 @@ function HomePage() {
       </section>
 
       {/* Recent events */}
-      <section className="soft-card rounded-[28px] px-1 pb-2 pt-4">
+      <section className="soft-card glow-soft rounded-[28px] px-1 pb-2 pt-4">
         <div className="flex items-center justify-between px-4 pb-2">
           <h2 className="text-[22px] font-bold leading-7">События дня</h2>
-          <Link to="/history" className="text-[15px] font-semibold text-primary">
+          <Link to="/history" className="text-glow-soft text-[15px] font-semibold text-primary">
             Смотреть все
           </Link>
         </div>
@@ -144,6 +144,9 @@ function HomePage() {
                 >
                   <div
                     className={`flex size-[46px] items-center justify-center rounded-[23px] ring-1 ${cfg.bg} ${cfg.ring}`}
+                    style={{
+                      boxShadow: `0 0 14px color-mix(in oklab, var(--${a.type}) 35%, transparent)`,
+                    }}
                   >
                     <Icon className={`size-[22px] ${cfg.color}`} />
                   </div>
@@ -180,10 +183,21 @@ function QuickTile({
     <button
       onClick={onClick}
       className={`liquid-control flex h-[102px] w-[60px] flex-col items-center justify-center gap-2.5 rounded-[22px] transition-transform active:scale-[0.96] ${
-        active ? "ring-2 ring-primary" : ""
+        active ? "ring-2 ring-primary glow-strong" : "glow-soft"
       }`}
+      style={{
+        boxShadow: active
+          ? undefined
+          : `inset 0 1px 0 rgba(255,255,255,0.08), 0 0 12px color-mix(in oklab, var(--${type}) 22%, transparent), 0 8px 22px rgba(0,0,0,0.24)`,
+      }}
     >
-      <Icon className={`size-[26px] ${cfg.color}`} strokeWidth={1.8} />
+      <Icon
+        className={`size-[26px] ${cfg.color}`}
+        strokeWidth={1.8}
+        style={{
+          filter: `drop-shadow(0 0 6px color-mix(in oklab, var(--${type}) 70%, transparent))`,
+        }}
+      />
       <span className="text-[13px] font-semibold leading-4">{shortLabel[type]}</span>
     </button>
   );
