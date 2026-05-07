@@ -69,7 +69,7 @@ function HomePage() {
       <header className="relative min-h-[156px]">
         <div className="flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1 pt-1">
-            <h1 className="truncate text-[34px] font-bold leading-[38px] tracking-tight text-foreground">
+            <h1 className="text-glow truncate text-[34px] font-bold leading-[38px] tracking-tight text-foreground">
               {babyName}
             </h1>
             <p className="mt-2 text-base text-foreground/65">
@@ -81,7 +81,7 @@ function HomePage() {
           <Link
             to="/settings"
             aria-label="Настройки"
-            className="liquid-control flex size-12 shrink-0 items-center justify-center rounded-full"
+            className="liquid-control glow-soft flex size-12 shrink-0 items-center justify-center rounded-full"
           >
             <SettingsIcon className="size-5 text-foreground/80" />
           </Link>
