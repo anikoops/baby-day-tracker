@@ -120,10 +120,10 @@ function HomePage() {
       </section>
 
       {/* Recent events */}
-      <section className="soft-card rounded-[28px] px-1 pb-2 pt-4">
+      <section className="soft-card glow-soft rounded-[28px] px-1 pb-2 pt-4">
         <div className="flex items-center justify-between px-4 pb-2">
           <h2 className="text-[22px] font-bold leading-7">События дня</h2>
-          <Link to="/history" className="text-[15px] font-semibold text-primary">
+          <Link to="/history" className="text-glow-soft text-[15px] font-semibold text-primary">
             Смотреть все
           </Link>
         </div>
