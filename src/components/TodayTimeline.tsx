@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { Activity, ActivityType } from "@/lib/tracker-store";
 import { formatTime } from "@/lib/tracker-store";
+import { activityConfig } from "@/lib/activity-config";
 
 interface Props {
   activities: Activity[];
@@ -14,23 +15,23 @@ const colorMap: Record<ActivityType, string> = {
   walk: "oklch(0.80 0.13 150)",
 };
 
+const types: ActivityType[] = ["sleep", "feed", "walk", "diaper"];
+
 export function TodayTimeline({ activities, now }: Props) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
 
-  // Day window: 00:00 → 24:00 of `now`'s day
   const dayStart = new Date(now).setHours(0, 0, 0, 0);
   const dayEnd = dayStart + 24 * 3600_000;
   const pct = (t: number) =>
     Math.max(0, Math.min(100, ((t - dayStart) / (dayEnd - dayStart)) * 100));
 
-  const sorted = [...activities].sort((a, b) => a.startedAt - b.startedAt);
   const nowPct = pct(now);
 
   return (
     <div className="relative">
       {/* hour ticks */}
-      <div className="relative mb-2 h-3">
+      <div className="relative mb-1.5 h-3">
         {[0, 6, 12, 18, 24].map((h) => (
           <span
             key={h}
@@ -42,58 +43,87 @@ export function TodayTimeline({ activities, now }: Props) {
         ))}
       </div>
 
-      {/* track */}
-      <div className="relative h-[18px]">
-        <div
-          className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2"
-          style={{
-            background:
-              "linear-gradient(90deg, transparent, rgba(255,255,255,0.18) 8%, rgba(255,255,255,0.18) 92%, transparent)",
-          }}
-        />
-        {/* progress fill up to now */}
+      {/* per-type lanes */}
+      <div className="relative space-y-1.5">
+        {/* vertical now line spanning all lanes */}
         {mounted && (
           <div
-            className="absolute top-1/2 h-px -translate-y-1/2"
-            style={{
-              left: 0,
-              width: `${nowPct}%`,
-              background:
-                "linear-gradient(90deg, transparent, oklch(0.78 0.13 300 / 0.6))",
-            }}
-          />
-        )}
-
-        {/* activity dots */}
-        {sorted.map((a) => (
-          <span
-            key={a.id}
-            className="absolute top-1/2 size-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full"
-            style={{
-              left: `${pct(a.startedAt)}%`,
-              background: colorMap[a.type],
-              boxShadow: `0 0 8px ${colorMap[a.type]}`,
-            }}
-          />
-        ))}
-
-        {/* now indicator */}
-        {mounted && (
-          <span
-            className="absolute top-1/2 size-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-2 ring-background"
+            className="pointer-events-none absolute inset-y-0 w-px"
             style={{
               left: `${nowPct}%`,
-              background: "oklch(0.78 0.13 300)",
-              boxShadow: "0 0 12px oklch(0.78 0.13 300 / 0.8)",
+              background:
+                "linear-gradient(180deg, transparent, oklch(0.78 0.13 300 / 0.5), transparent)",
+              boxShadow: "0 0 8px oklch(0.78 0.13 300 / 0.6)",
             }}
           />
         )}
+
+        {types.map((type) => {
+          const cfg = activityConfig[type];
+          const color = colorMap[type];
+          const items = activities.filter((a) => a.type === type);
+          return (
+            <div key={type} className="relative h-3">
+              {/* lane base */}
+              <div
+                className="absolute inset-x-0 top-1/2 h-[6px] -translate-y-1/2 rounded-full"
+                style={{
+                  background: "rgba(255,255,255,0.04)",
+                  boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05)",
+                }}
+              />
+              {/* duration bars + instant dots */}
+              {items.map((a) => {
+                const startPct = pct(a.startedAt);
+                const endPct = pct(a.endedAt ?? now);
+                const width = Math.max(0.6, endPct - startPct);
+                const isInstant = !a.endedAt
+                  ? false
+                  : a.endedAt - a.startedAt < 60_000;
+                if (isInstant) {
+                  return (
+                    <span
+                      key={a.id}
+                      className="absolute top-1/2 size-2 -translate-x-1/2 -translate-y-1/2 rounded-full"
+                      style={{
+                        left: `${startPct}%`,
+                        background: color,
+                        boxShadow: `0 0 10px ${color}, 0 0 18px ${color}`,
+                      }}
+                    />
+                  );
+                }
+                return (
+                  <span
+                    key={a.id}
+                    className="absolute top-1/2 h-[6px] -translate-y-1/2 rounded-full"
+                    style={{
+                      left: `${startPct}%`,
+                      width: `${width}%`,
+                      background: `linear-gradient(90deg, ${color} / 0.0, ${color}) `,
+                      backgroundImage: `linear-gradient(90deg, color-mix(in oklab, ${color} 55%, transparent), color-mix(in oklab, ${color} 90%, transparent))`,
+                      boxShadow: `0 0 10px color-mix(in oklab, ${color} 70%, transparent), inset 0 0 6px color-mix(in oklab, ${color} 50%, transparent)`,
+                    }}
+                  />
+                );
+              })}
+              {/* lane label */}
+              <span
+                className="absolute -left-px top-1/2 -translate-y-1/2 font-mono text-[8px] uppercase tracking-[0.2em] text-foreground/30"
+                style={{ paddingLeft: 0 }}
+                aria-hidden
+              >
+                {cfg.emoji}
+              </span>
+            </div>
+          );
+        })}
       </div>
 
       {/* footer: count + now time */}
       <div className="mt-2 flex items-center justify-between text-[11px] text-foreground/45">
         <span className="font-mono uppercase tracking-[0.14em]">
-          {sorted.length.toString().padStart(2, "0")} событий
+          {activities.length.toString().padStart(2, "0")} событий
         </span>
         <span className="font-mono" suppressHydrationWarning>
           {mounted ? formatTime(now) : "--:--"}
