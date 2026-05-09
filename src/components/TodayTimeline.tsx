@@ -74,7 +74,7 @@ export function TodayTimeline({ activities, now }: Props) {
                   className="flex size-4 items-center justify-center rounded-full text-[9px] leading-none"
                   style={{
                     background: `color-mix(in oklab, ${color} 25%, transparent)`,
-                    boxShadow: `0 0 8px color-mix(in oklab, ${color} 70%, transparent), inset 0 0 0 1px color-mix(in oklab, ${color} 60%, transparent)`,
+                    boxShadow: `0 0 4px color-mix(in oklab, ${color} 35%, transparent), inset 0 0 0 1px color-mix(in oklab, ${color} 50%, transparent)`,
                   }}
                   title={activityConfig[a.type].label}
                 >

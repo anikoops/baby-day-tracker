@@ -145,7 +145,7 @@ function HomePage() {
                   <div
                     className={`flex size-[46px] items-center justify-center rounded-[23px] ring-1 ${cfg.bg} ${cfg.ring}`}
                     style={{
-                      boxShadow: `0 0 14px color-mix(in oklab, var(--${a.type}) 35%, transparent)`,
+                      boxShadow: `0 0 6px color-mix(in oklab, var(--${a.type}) 18%, transparent)`,
                     }}
                   >
                     <Icon className={`size-[22px] ${cfg.color}`} />
