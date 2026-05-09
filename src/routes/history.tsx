@@ -265,11 +265,12 @@ function SelectedCard({ a }: { a: Activity }) {
           </span>
         )}
       </div>
-      <div className="flex items-center justify-between border-t border-white/5 pt-2 text-xs text-foreground/60">
-        <span>{a.parent}</span>
-        {a.meta?.ml && <span className="font-mono">{a.meta.ml} мл</span>}
-        {a.note && <span className="truncate">{a.note}</span>}
-      </div>
+      {(a.meta?.ml || a.note) && (
+        <div className="flex items-center justify-between border-t border-white/5 pt-2 text-xs text-foreground/60">
+          {a.meta?.ml && <span className="font-mono">{a.meta.ml} мл</span>}
+          {a.note && <span className="truncate">{a.note}</span>}
+        </div>
+      )}
     </div>
   );
 }
