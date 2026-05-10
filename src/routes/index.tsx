@@ -94,21 +94,6 @@ function HomePage() {
         />
       </header>
 
-      {/* Quick Add */}
-      <section>
-        <h2 className="mb-3 text-xl font-bold text-foreground/75">Быстро добавить</h2>
-        <div className="flex items-center justify-between gap-2">
-          <QuickTile type="sleep" active={active?.type === "sleep"} onClick={() => handleQuick("sleep")} />
-          <QuickTile type="feed" onClick={() => handleQuick("feed")} />
-          <PlusButton onClick={handlePlus} stopping={!!active} />
-          <QuickTile type="diaper" onClick={() => handleQuick("diaper")} />
-          <QuickTile type="walk" onClick={() => handleQuick("walk")} />
-        </div>
-        <p className="mt-2 text-center text-[13px] text-foreground/40">
-          {active ? "Нажмите ещё раз, чтобы остановить" : "Добавить другое событие"}
-        </p>
-      </section>
-
       {/* Timeline */}
       <section className="soft-card glow-medium rounded-[22px] px-4 pb-3 pt-3">
         <div className="mb-1 flex items-center justify-between">
