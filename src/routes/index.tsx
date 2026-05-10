@@ -9,7 +9,7 @@ import {
   type ActivityType,
 } from "@/lib/tracker-store";
 import { activityConfig } from "@/lib/activity-config";
-import { Settings as SettingsIcon, Plus, Square, ChevronRight } from "lucide-react";
+import { Settings as SettingsIcon, ChevronRight } from "lucide-react";
 import babyMoon from "@/assets/baby-moon.png";
 import { TodayTimeline } from "@/components/TodayTimeline";
 
@@ -17,12 +17,6 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const shortLabel: Record<ActivityType, string> = {
-  sleep: "Сон",
-  feed: "Еда",
-  diaper: "Подгуз.",
-  walk: "Прогул.",
-};
 
 function HomePage() {
   const {
@@ -46,22 +40,7 @@ function HomePage() {
   }, []);
 
   const today = todaysActivities(activities);
-  const active = activities.find((a) => a.id === activeId);
   const recent = today.slice(0, 3);
-
-  const handleQuick = (type: ActivityType) => {
-    if (type === "sleep") {
-      if (active?.type === "sleep") stopActivity();
-      else startActivity("sleep");
-    } else {
-      logInstant(type);
-    }
-  };
-
-  const handlePlus = () => {
-    if (active) stopActivity();
-    else logInstant("feed");
-  };
 
   return (
     <div className="flex flex-col gap-5 px-6 pb-6 pt-5">
