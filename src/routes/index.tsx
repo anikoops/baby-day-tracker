@@ -6,10 +6,9 @@ import {
   formatTime,
   timeAgo,
   formatBabyAge,
-  type ActivityType,
 } from "@/lib/tracker-store";
 import { activityConfig } from "@/lib/activity-config";
-import { Settings as SettingsIcon, Plus, Square, ChevronRight } from "lucide-react";
+import { Settings as SettingsIcon, ChevronRight } from "lucide-react";
 import babyMoon from "@/assets/baby-moon.png";
 import { TodayTimeline } from "@/components/TodayTimeline";
 
@@ -17,24 +16,8 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-const shortLabel: Record<ActivityType, string> = {
-  sleep: "Сон",
-  feed: "Еда",
-  diaper: "Подгуз.",
-  walk: "Прогул.",
-};
-
 function HomePage() {
-  const {
-    babyName,
-    babyBirthDate,
-    currentParent,
-    activities,
-    activeId,
-    startActivity,
-    stopActivity,
-    logInstant,
-  } = useTracker();
+  const { babyName, babyBirthDate, currentParent, activities } = useTracker();
 
   const [mounted, setMounted] = useState(false);
   const [now, setNow] = useState(() => Date.now());
@@ -46,22 +29,7 @@ function HomePage() {
   }, []);
 
   const today = todaysActivities(activities);
-  const active = activities.find((a) => a.id === activeId);
   const recent = today.slice(0, 3);
-
-  const handleQuick = (type: ActivityType) => {
-    if (type === "sleep") {
-      if (active?.type === "sleep") stopActivity();
-      else startActivity("sleep");
-    } else {
-      logInstant(type);
-    }
-  };
-
-  const handlePlus = () => {
-    if (active) stopActivity();
-    else logInstant("feed");
-  };
 
   return (
     <div className="flex flex-col gap-5 px-6 pb-6 pt-5">
@@ -93,21 +61,6 @@ function HomePage() {
           className="pointer-events-none absolute right-0 top-14 h-28 w-40 object-contain opacity-95"
         />
       </header>
-
-      {/* Quick Add */}
-      <section>
-        <h2 className="mb-3 text-xl font-bold text-foreground/75">Быстро добавить</h2>
-        <div className="flex items-center justify-between gap-2">
-          <QuickTile type="sleep" active={active?.type === "sleep"} onClick={() => handleQuick("sleep")} />
-          <QuickTile type="feed" onClick={() => handleQuick("feed")} />
-          <PlusButton onClick={handlePlus} stopping={!!active} />
-          <QuickTile type="diaper" onClick={() => handleQuick("diaper")} />
-          <QuickTile type="walk" onClick={() => handleQuick("walk")} />
-        </div>
-        <p className="mt-2 text-center text-[13px] text-foreground/40">
-          {active ? "Нажмите ещё раз, чтобы остановить" : "Добавить другое событие"}
-        </p>
-      </section>
 
       {/* Timeline */}
       <section className="soft-card glow-medium rounded-[22px] px-4 pb-3 pt-3">
@@ -168,58 +121,3 @@ function HomePage() {
   );
 }
 
-function QuickTile({
-  type,
-  active,
-  onClick,
-}: {
-  type: ActivityType;
-  active?: boolean;
-  onClick: () => void;
-}) {
-  const cfg = activityConfig[type];
-  const Icon = cfg.icon;
-  return (
-    <button
-      onClick={onClick}
-      className={`liquid-control flex h-[102px] w-[60px] flex-col items-center justify-center gap-2.5 rounded-[22px] transition-transform active:scale-[0.96] ${
-        active ? "ring-2 ring-primary glow-strong" : "glow-soft"
-      }`}
-      style={{
-        boxShadow: active
-          ? undefined
-          : `inset 0 1px 0 rgba(255,255,255,0.08), 0 0 12px color-mix(in oklab, var(--${type}) 22%, transparent), 0 8px 22px rgba(0,0,0,0.24)`,
-      }}
-    >
-      <Icon
-        className={`size-[26px] ${cfg.color}`}
-        strokeWidth={1.8}
-        style={{
-          filter: `drop-shadow(0 0 6px color-mix(in oklab, var(--${type}) 70%, transparent))`,
-        }}
-      />
-      <span className="text-[13px] font-semibold leading-4">{shortLabel[type]}</span>
-    </button>
-  );
-}
-
-function PlusButton({ onClick, stopping }: { onClick: () => void; stopping: boolean }) {
-  return (
-    <button
-      onClick={onClick}
-      aria-label={stopping ? "Остановить" : "Добавить событие"}
-      className="plus-pulse relative flex size-24 shrink-0 items-center justify-center rounded-full text-white transition-transform active:scale-[0.96]"
-      style={{
-        background:
-          "radial-gradient(circle at 35% 25%, rgba(255,255,255,0.38), transparent 28%), linear-gradient(180deg, #B58AFF 0%, #7D4DFF 100%)",
-      }}
-    >
-      <span className="pointer-events-none absolute inset-0 rounded-full ring-1 ring-white/30" />
-      {stopping ? (
-        <Square className="size-6 fill-current" />
-      ) : (
-        <Plus className="size-12" strokeWidth={2} />
-      )}
-    </button>
-  );
-}
