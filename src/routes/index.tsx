@@ -1,19 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   useTracker,
   todaysActivities,
-  totalDuration,
-  formatDuration,
   formatTime,
   timeAgo,
   formatBabyAge,
-  type Activity,
   type ActivityType,
 } from "@/lib/tracker-store";
 import { activityConfig } from "@/lib/activity-config";
 import { Settings as SettingsIcon, Plus, Square, ChevronRight } from "lucide-react";
 import babyMoon from "@/assets/baby-moon.png";
+import { TodayTimeline } from "@/components/TodayTimeline";
 
 export const Route = createFileRoute("/")({
   component: HomePage,
@@ -68,27 +66,33 @@ function HomePage() {
   return (
     <div className="flex flex-col gap-5 px-6 pb-6 pt-5">
       {/* Header */}
-      <header className="flex items-start justify-between gap-3">
-        <div className="min-w-0 flex-1 pt-1">
-          <h1 className="text-glow truncate text-[34px] font-bold leading-[38px] tracking-tight text-foreground">
-            {babyName}
-          </h1>
-          <p className="mt-2 text-base text-foreground/65">
-            {formatBabyAge(babyBirthDate)}
-            {currentParent ? ` · ${currentParent}` : ""}
-          </p>
+      <header className="relative min-h-[156px]">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0 flex-1 pt-1">
+            <h1 className="text-glow truncate text-[34px] font-bold leading-[38px] tracking-tight text-foreground">
+              {babyName}
+            </h1>
+            <p className="mt-2 text-base text-foreground/65">
+              {formatBabyAge(babyBirthDate)}
+              {currentParent ? ` · ${currentParent}` : ""}
+            </p>
+            <p className="mt-3 text-sm text-foreground/55">Локальный режим</p>
+          </div>
+          <Link
+            to="/settings"
+            aria-label="Настройки"
+            className="liquid-control glow-soft flex size-12 shrink-0 items-center justify-center rounded-full"
+          >
+            <SettingsIcon className="size-5 text-foreground/80" />
+          </Link>
         </div>
-        <Link
-          to="/settings"
-          aria-label="Настройки"
-          className="liquid-control glow-soft flex size-12 shrink-0 items-center justify-center rounded-full"
-        >
-          <SettingsIcon className="size-5 text-foreground/80" />
-        </Link>
+        <img
+          src={babyMoon}
+          alt=""
+          aria-hidden
+          className="pointer-events-none absolute right-0 top-14 h-28 w-40 object-contain opacity-95"
+        />
       </header>
-
-      {/* Now */}
-      <NowCard activities={today} active={active} now={now} mounted={mounted} />
 
       {/* Quick Add */}
       <section>
@@ -105,8 +109,15 @@ function HomePage() {
         </p>
       </section>
 
-      {/* Today summary */}
-      <TodaySummary activities={today} />
+      {/* Timeline */}
+      <section className="soft-card glow-medium rounded-[22px] px-4 pb-3 pt-3">
+        <div className="mb-1 flex items-center justify-between">
+          <h2 className="text-glow-soft text-[13px] font-semibold uppercase tracking-[0.18em] text-foreground/70">
+            Сегодня
+          </h2>
+        </div>
+        <TodayTimeline activities={today} now={now} />
+      </section>
 
       {/* Recent events */}
       <section className="soft-card glow-soft rounded-[28px] px-1 pb-2 pt-4">
@@ -154,167 +165,6 @@ function HomePage() {
         )}
       </section>
     </div>
-  );
-}
-
-function NowCard({
-  activities,
-  active,
-  now,
-  mounted,
-}: {
-  activities: Activity[];
-  active?: Activity;
-  now: number;
-  mounted: boolean;
-}) {
-  const sleepRow = useMemo(() => {
-    if (active?.type === "sleep") {
-      const mins = Math.max(0, Math.floor((now - active.startedAt) / 60000));
-      return {
-        title: `Спит ${formatDuration(mins * 60000)}`,
-        subtitle: `начался в ${formatTime(active.startedAt)}`,
-      };
-    }
-    const lastSleep = activities
-      .filter((a) => a.type === "sleep" && a.endedAt)
-      .sort((a, b) => (b.endedAt as number) - (a.endedAt as number))[0];
-    if (lastSleep && lastSleep.endedAt) {
-      const mins = Math.max(0, Math.floor((now - lastSleep.endedAt) / 60000));
-      return {
-        title: `Бодрствует ${formatDuration(mins * 60000)}`,
-        subtitle: `после сна ${formatTime(lastSleep.startedAt)} — ${formatTime(lastSleep.endedAt)}`,
-      };
-    }
-    return { title: "Сна сегодня ещё не было", subtitle: "" };
-  }, [active, activities, now]);
-
-  const lastFeed = activities.filter((a) => a.type === "feed").sort((a, b) => b.startedAt - a.startedAt)[0];
-  const lastDiaper = activities.filter((a) => a.type === "diaper").sort((a, b) => b.startedAt - a.startedAt)[0];
-
-  const feedRow = lastFeed
-    ? {
-        title: `Кормление ${timeAgo(lastFeed.startedAt)}`,
-        subtitle: `последнее в ${formatTime(lastFeed.startedAt)}${
-          lastFeed.meta?.ml ? ` · ${lastFeed.meta.ml} мл` : ""
-        }`,
-      }
-    : { title: "Кормления ещё не было", subtitle: "" };
-
-  const diaperRow = lastDiaper
-    ? {
-        title: `Подгузник ${timeAgo(lastDiaper.startedAt)}`,
-        subtitle: `последний в ${formatTime(lastDiaper.startedAt)}`,
-      }
-    : { title: "Подгузник ещё не меняли", subtitle: "" };
-
-  const rows: { type: ActivityType; title: string; subtitle: string }[] = [
-    { type: "sleep", ...sleepRow },
-    { type: "feed", ...feedRow },
-    { type: "diaper", ...diaperRow },
-  ];
-
-  return (
-    <section className="soft-card glow-medium relative overflow-hidden rounded-[28px] px-5 pb-5 pt-4">
-      <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-[22px] font-bold leading-7">Сейчас</h2>
-        <span className="font-mono text-[15px] text-foreground/55" suppressHydrationWarning>
-          {mounted ? formatTime(now) : ""}
-        </span>
-      </div>
-      <div className="relative z-10 flex flex-col gap-3 pr-[44%]">
-        {rows.map((r) => {
-          const cfg = activityConfig[r.type];
-          const Icon = cfg.icon;
-          return (
-            <div key={r.type} className="flex items-center gap-3">
-              <div
-                className={`flex size-[44px] shrink-0 items-center justify-center rounded-[22px] ring-1 ${cfg.bg} ${cfg.ring}`}
-                style={{
-                  boxShadow: `0 0 8px color-mix(in oklab, var(--${r.type}) 22%, transparent)`,
-                }}
-              >
-                <Icon
-                  className={`size-[20px] ${cfg.color}`}
-                  style={{
-                    filter: `drop-shadow(0 0 4px color-mix(in oklab, var(--${r.type}) 60%, transparent))`,
-                  }}
-                />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-[15px] font-semibold leading-5" suppressHydrationWarning>
-                  {mounted ? r.title : "—"}
-                </p>
-                {r.subtitle && (
-                  <p className="truncate text-[12px] text-foreground/55" suppressHydrationWarning>
-                    {mounted ? r.subtitle : ""}
-                  </p>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-      <img
-        src={babyMoon}
-        alt=""
-        aria-hidden
-        className="pointer-events-none absolute -right-2 bottom-0 top-8 my-auto h-[180px] w-auto object-contain opacity-95"
-      />
-    </section>
-  );
-}
-
-function TodaySummary({ activities }: { activities: Activity[] }) {
-  const types: ActivityType[] = ["sleep", "feed", "diaper", "walk"];
-  const stats = types.map((t) => {
-    const count = activities.filter((a) => a.type === t).length;
-    const dur = totalDuration(activities, t);
-    const isDuration = t === "sleep" || t === "walk";
-    const value = isDuration ? formatDuration(dur) : String(count);
-    const label =
-      t === "sleep"
-        ? "Сон"
-        : t === "feed"
-          ? "Кормлений"
-          : t === "diaper"
-            ? "Подгузников"
-            : "Прогулка";
-    return { type: t, value, label };
-  });
-
-  return (
-    <section className="soft-card glow-soft rounded-[28px] px-4 pb-4 pt-4">
-      <h2 className="mb-3 text-[18px] font-bold leading-6">Сегодня</h2>
-      <div className="flex items-stretch gap-2">
-        {stats.map((s) => {
-          const cfg = activityConfig[s.type];
-          const Icon = cfg.icon;
-          return (
-            <div
-              key={s.type}
-              className="flex flex-1 flex-col items-center gap-1.5 rounded-[18px] px-1 py-2"
-            >
-              <div
-                className={`flex size-[36px] items-center justify-center rounded-full ring-1 ${cfg.bg} ${cfg.ring}`}
-                style={{
-                  boxShadow: `0 0 6px color-mix(in oklab, var(--${s.type}) 18%, transparent)`,
-                }}
-              >
-                <Icon
-                  className={`size-[18px] ${cfg.color}`}
-                  style={{
-                    filter: `drop-shadow(0 0 3px color-mix(in oklab, var(--${s.type}) 50%, transparent))`,
-                  }}
-                />
-              </div>
-              <span className="text-[16px] font-bold leading-5 tabular-nums">{s.value}</span>
-              <span className="text-[11px] text-foreground/55">{s.label}</span>
-            </div>
-          );
-        })}
-      </div>
-    </section>
   );
 }
 
