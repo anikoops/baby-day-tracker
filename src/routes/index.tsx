@@ -6,7 +6,6 @@ import {
   formatTime,
   timeAgo,
   formatBabyAge,
-  type ActivityType,
 } from "@/lib/tracker-store";
 import { activityConfig } from "@/lib/activity-config";
 import { Settings as SettingsIcon, ChevronRight } from "lucide-react";
@@ -17,18 +16,8 @@ export const Route = createFileRoute("/")({
   component: HomePage,
 });
 
-
 function HomePage() {
-  const {
-    babyName,
-    babyBirthDate,
-    currentParent,
-    activities,
-    activeId,
-    startActivity,
-    stopActivity,
-    logInstant,
-  } = useTracker();
+  const { babyName, babyBirthDate, currentParent, activities } = useTracker();
 
   const [mounted, setMounted] = useState(false);
   const [now, setNow] = useState(() => Date.now());
